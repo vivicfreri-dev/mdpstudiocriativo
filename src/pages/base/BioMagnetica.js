@@ -18,7 +18,9 @@ export default function BioMagnetica() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!nomes.length && cerebro) gerar();
+    if (!nomes.length && cerebro && Object.keys(cerebro).length > 0) {
+      gerar();
+    }
   }, [cerebro]);
 
   async function gerar() {
@@ -79,6 +81,17 @@ REGRAS:
         <div className="progress-bar" style={{ marginBottom: '12px' }}>
           <div className="progress-fill" style={{ width: '40%' }} />
         </div>
+
+        {cerebro && !loading && !nomes.length && (
+          <div style={{ textAlign: 'center', padding: '30px 0' }}>
+            <p style={{ fontSize: '13px', color: '#888', marginBottom: '16px' }}>
+              Clique para gerar sua bio com IA
+            </p>
+            <button onClick={gerar} className="btn btn-rose">
+              ✨ Gerar bio agora
+            </button>
+          </div>
+        )}
 
         {!cerebro && (
           <div style={{ background: '#FBEAF0', border: '0.5px solid #F4C0D1', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>

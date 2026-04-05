@@ -181,7 +181,7 @@ export default function SegundoCerebro() {
           fontSize: '10px', fontWeight: '700', textTransform: 'uppercase',
           letterSpacing: '0.05em', marginBottom: '12px'
         }}>
-          Bloco {bloco.id} — {bloco.titulo}
+          BLOCO {blocoAtual + 1} — {bloco.titulo.toUpperCase()}
         </div>
 
         {blocoAtual === 0 && !isVivi && (
