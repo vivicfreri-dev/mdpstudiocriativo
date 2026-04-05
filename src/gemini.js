@@ -1,5 +1,7 @@
+// API Claude (Anthropic) — texto
+// API Gemini (Google) — imagens
+const CLAUDE_KEY = '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';
 const GEMINI_KEY = 'AIzaSyBHDuyN_AUdfdRVxzxXW5A5HbAE6EtieIE';
-const GEMINI_TEXT_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
 const GEMINI_IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${GEMINI_KEY}`;
 
 const PALAVRAS_PROIBIDAS = [
@@ -21,21 +23,28 @@ REGRAS ABSOLUTAS DE LINGUAGEM:
 `;
 
 export async function gerarTexto(prompt, cerebro) {
-  const promptCompleto = `${montarContextoCerebro(cerebro)}\n\n${prompt}\n\n${REGRAS_BASE}`;
+  const sistema = `${montarContextoCerebro(cerebro)}\n\n${REGRAS_BASE}`;
   
-  const response = await fetch(GEMINI_TEXT_URL, {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CLAUDE_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: promptCompleto }] }],
-      generationConfig: { temperature: 0.85, maxOutputTokens: 2500 }
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2500,
+      system: sistema,
+      messages: [{ role: 'user', content: prompt }]
     })
   });
 
   const data = await response.json();
   if (data.error) throw new Error(data.error.message);
   
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = data.content?.[0]?.text || '';
   return text.replace(/```json/gi, '').replace(/```/g, '').trim();
 }
 
